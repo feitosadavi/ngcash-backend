@@ -1,11 +1,19 @@
 import { IHasherAdapter } from 'shared/data/adapters/cryptography'
 import { ICreateUserService } from '../domain/contracts'
+import { ICreateUserRepository } from './repository.protocols'
 
 export class CreateUserService implements ICreateUserService {
-	constructor(private readonly hasher: IHasherAdapter) { }
+	constructor(
+		private readonly hasher: IHasherAdapter,
+		private readonly createUserRepository: ICreateUserRepository
+	) { }
 
 	async execute (input: ICreateUserService.Input): Promise<ICreateUserService.Output> {
-		await this.hasher.hash(input.password)
+		const hashedPassword = await this.hasher.hash(input.password)
+		await this.createUserRepository.create({
+			...input,
+			password: hashedPassword
+		})
 		return false
 	}
 }
