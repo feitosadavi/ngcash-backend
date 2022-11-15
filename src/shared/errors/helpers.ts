@@ -1,20 +1,39 @@
 /* eslint-disable indent */
 import { IResponse } from '@modules/user/application/protocols'
-import { AppError, ErrorInfo, INTERNAL_SERVER_ERROR } from '.'
 
 export const success = (data: any): IResponse => ({
 	statusCode: 200,
 	body: data
 })
 
-export const forbidden = (error: ErrorInfo): IResponse => ({
-	statusCode: 300,
-	body: new AppError(error)
+export const forbidden = ({ name, message }: Error): IResponse => ({
+	statusCode: 403,
+	body: {
+		error: {
+			type: name,
+			message: message
+		}
+	}
 })
 
-export const serverError = (error?: Partial<ErrorInfo>): IResponse => ({
+export const badRequest = ({ name, message }: Error): IResponse => ({
+	statusCode: 400,
+	body: {
+		error: {
+			type: name,
+			message: message
+		}
+	}
+})
+
+export const serverError = (error?: Error): IResponse => ({
 	statusCode: 500,
-	body: new AppError({ ...INTERNAL_SERVER_ERROR, stack: error?.stack },)
+	body: {
+		error: {
+			type: error?.name,
+			message: error?.message
+		}
+	}
 })
 
 type Foo = {
@@ -23,12 +42,9 @@ type Foo = {
 }
 
 export const processErrors = (error: Error, errorPossibilities: Foo[]): IResponse => {
-	if (error instanceof AppError) {
 		const errorMatch = errorPossibilities.filter(errorPossibilitie => errorPossibilitie.possibleErrorName === error.name)[0]
+	console.log({ errorMatch })
 
 		if (errorMatch) return errorMatch.return
-		else return serverError({ stack: error.stack })
-	}
-
-	return serverError({ stack: error.stack })
+		else return serverError(error)
 }

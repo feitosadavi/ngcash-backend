@@ -1,23 +1,21 @@
-export type ErrorInfo = {
-	name: string
-	message: string
-	stack?: any
-}
-
-export const USERNAME_ALREADY_EXISTS: ErrorInfo = {
-	name: 'UsernameAlreadyExistsError',
-	message: 'A user with inserted username already exists'
-}
-
-export const INTERNAL_SERVER_ERROR: ErrorInfo = {
-	name: 'InternalServerError',
-	message: 'A Internal Server Error has ocurred. Sorry!'
-}
-
-export class AppError extends Error {
-	constructor({ name, message, stack }: ErrorInfo) {
-		super(message)
-		this.name = name
+export class InternalServerError extends Error {
+	constructor(stack?: any) {
+		super('A Internal Server Error has ocurred. Sorry!')
+		this.name = 'InternalServerError'
 		this.stack = stack
+	}
+}
+
+export class UsernameAlreadyExistsError extends Error {
+	constructor() {
+		super('A user with inserted username already exists')
+		this.name = 'UsernameAlreadyExistsError'
+	}
+}
+
+export class ValidationError extends Error {
+	constructor(message: string) {
+		super(message)
+		this.name = 'ValidationError'
 	}
 }

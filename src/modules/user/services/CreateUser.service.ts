@@ -1,5 +1,5 @@
 import { IHasherAdapter } from '@shared/data/adapters/cryptography'
-import { AppError, USERNAME_ALREADY_EXISTS } from '@shared/errors'
+import { UsernameAlreadyExistsError } from '@shared/errors'
 import { ICreateUserService } from '../domain/contracts'
 import { ICreateUserRepository, ILoadOneUserByRepository } from './repository.protocols'
 
@@ -16,7 +16,7 @@ export class CreateUserService implements ICreateUserService {
 
 		const user = await this.loadOneUserBy.loadOneBy({ username })
 
-		if (user) throw new AppError(USERNAME_ALREADY_EXISTS)
+		if (user) throw new UsernameAlreadyExistsError()
 
 		const hashedPassword = await this.hasher.hash(password)
 

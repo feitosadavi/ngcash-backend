@@ -2,8 +2,8 @@
 import { ICreateUserService } from '@modules/user/domain/contracts'
 import { ICreateUserModel } from '@modules/user/domain/models'
 import { IValidator } from '@shared/data/adapters'
-import { USERNAME_ALREADY_EXISTS } from '@shared/errors'
-import { forbidden, processErrors, success } from '@shared/errors/helpers'
+import { UsernameAlreadyExistsError, ValidationError } from '@shared/errors'
+import { badRequest, forbidden, processErrors, success } from '@shared/errors/helpers'
 import { IController, IRequest, IResponse } from '../protocols'
 
 export class CreateUserController implements IController {
@@ -20,8 +20,11 @@ export class CreateUserController implements IController {
 
 		} catch (error: any) {
 			return processErrors(error, [{
-				possibleErrorName: USERNAME_ALREADY_EXISTS.name,
+				possibleErrorName: UsernameAlreadyExistsError.name,
 				return: forbidden(error)
+			}, {
+					possibleErrorName: ValidationError.name,
+					return: badRequest(error)
 			}])
 		}
 	}
