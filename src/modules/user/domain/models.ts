@@ -3,7 +3,7 @@ export interface ICreateUserModel {
 	password: string
 }
 
-export interface IUser {
+export interface IUserModel {
 	username: string
 	password: string
 }

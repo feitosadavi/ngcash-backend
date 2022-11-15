@@ -1,4 +1,4 @@
-import { ICreateUserModel, IUser } from 'modules/user/domain/models'
+import { ICreateUserModel, IUserModel } from 'modules/user/domain/models'
 
 export interface ICreateUserRepository {
 	create (input: ICreateUserRepository.Input): Promise<ICreateUserRepository.Output>
@@ -17,5 +17,5 @@ export namespace ILoadOneUserByRepository {
 	export type Input = {
 		[key: string]: string | number | boolean
 	}
-	export type Output = IUser
+	export type Output = IUserModel | null
 }
