@@ -42,8 +42,7 @@ type Foo = {
 }
 
 export const processErrors = (error: Error, errorPossibilities: Foo[]): IResponse => {
-		const errorMatch = errorPossibilities.filter(errorPossibilitie => errorPossibilitie.possibleErrorName === error.name)[0]
-	console.log({ errorMatch })
+	const errorMatch = errorPossibilities.filter(errorPossibilitie => errorPossibilitie.possibleErrorName === error.name)[0]
 
 		if (errorMatch) return errorMatch.return
 		else return serverError(error)

@@ -64,7 +64,6 @@ describe('CreateUserController', () => {
 		fakeValidator.validate.mockImplementationOnce(() => { throw error })
 
 		const res = await sut.handle(fakeRequest)
-		console.log(badRequest(error))
 
 		expect(res).toEqual(badRequest(error))
 	})
