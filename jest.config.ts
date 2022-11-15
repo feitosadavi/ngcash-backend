@@ -1,6 +1,6 @@
 export default {
 	clearMocks: true,
-	collectCoverage: true,
+	collectCoverage: false,
 	coverageDirectory: 'coverage',
 	roots: [
 		'<rootDir>/src',
@@ -8,13 +8,18 @@ export default {
 	],
 	collectCoverageFrom: [
 		'<rootDir>/src/**/*.ts',
+		'!<rootDir>/src/**/*.protocols.ts',
 	],
 	testEnvironment: 'node',
 	transform: {
 		'.+\\.ts$': 'ts-jest'
 	},
+	// moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
+	// 	prefix: '<rootDir>/',
+	// }),
 	moduleNameMapper: {
-		'@/(.*)': '<rootDir>/src/$1', // captura tudo após @/; $1 é o resultado da captura da expressão regular
-		'@tests(.*)': '<rootDir>/tests/$1', // captura tudo após @/; $1 é o resultado da captura da expressão regular
-	},
+		'@tests/(.*)': '<rootDir>/tests/$1',
+		'@shared/(.*)': '<rootDir>/src/shared/$1', // captura tudo após @/; $1 é o resultado da captura da expressão regular
+		'@modules/(.*)': '<rootDir>/src/modules/$1' // captura tudo após @/; $1 é o resultado da captura da expressão regular
+	}
 }

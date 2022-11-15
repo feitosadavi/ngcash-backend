@@ -8,14 +8,25 @@
 		"skipLibCheck": true,
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
-		"baseUrl": "src",
+		"baseUrl": "./",
+		"resolveJsonModule": true,
 		"paths": {
+			"@config/*": [
+				"src/config/*",
+			],
+			"@modules/*": [
+				"src/modules/*",
+			],
+			"@shared/*": [
+				"src/shared/*",
+			],
 			"@tests/*": [
-				"../tests/*"
+				"tests/*",
 			],
-			"@/*": [
-				"src/*"
-			],
-		}
+		},
+		"typeRoots": [
+			"@types",
+			"./node_modules/@types",
+		],
   }
 }
