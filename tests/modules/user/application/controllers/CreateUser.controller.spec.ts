@@ -7,6 +7,7 @@ import { CreateUserController } from '@modules/user/application/controllers/Crea
 import { AppError, USERNAME_ALREADY_EXISTS } from '@shared/errors'
 import { throwError } from '@tests/helpers'
 import { forbidden, serverError } from '@shared/errors/helpers'
+import { IValidator } from '@shared/data/adapters'
 
 const makeFakeCreateUserModel = (): ICreateUserModel => ({
 	username: 'any_username',
@@ -26,6 +27,7 @@ describe('CreateUserController', () => {
 	let sut: CreateUserController
 	let fakeHasher: MockProxy<IHasherAdapter>
 	let fakeCreateUserService: MockProxy<ICreateUserService>
+	let fakeValidator: MockProxy<IValidator>
 
 	let fakeCreateUserModel: ICreateUserModel
 	// let fakeUserModel: IUserModel
@@ -38,13 +40,23 @@ describe('CreateUserController', () => {
 		fakeCreateUserService = mock()
 		fakeCreateUserService.execute.mockResolvedValue(true)
 
+		fakeValidator = mock()
+		fakeValidator.validate.mockResolvedValue(null)
+
 		fakeCreateUserModel = makeFakeCreateUserModel()
 		// fakeUserModel = makeFakeUserModel()
 		fakeRequest = makeFakeRequest()
 	})
 
 	beforeEach(() => {
-		sut = new CreateUserController(fakeCreateUserService)
+		sut = new CreateUserController(fakeValidator, fakeCreateUserService)
+	})
+
+	it('should call Validator with correct input', async () => {
+		await sut.handle(fakeRequest)
+
+		expect(fakeValidator.validate)
+			.toHaveBeenCalledWith(fakeRequest.body)
 	})
 
 	it('should call CreateUserService with correct input', async () => {
