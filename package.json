@@ -7,10 +7,10 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "prepare": "husky install",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
-		"test:verbose": "jest --watch --passWithNoTests --runInBand",
-    "test:unit": "npm test -- --watch -c jest-unit-config.js",
-    "test:integration": "npm test -- --watch -c jest-integration-config.js",
-		"test:staged": "jest -o",
+    "test:verbose": "jest --watch --passWithNoTests --runInBand",
+    "test:unit": "npm test -- --watch -c jest-unit-config.ts",
+    "test:integration": "npm test -- --watch -c jest-integration-config.ts",
+    "test:staged": "jest -o",
     "test:ci": "npm test -- --coverage",
     "test:coveralls": "npm run test:ci && coveralls < coverage/lcov.info",
     "test:clear": "jest --clearCache"
@@ -21,6 +21,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.2.0",
     "@commitlint/config-conventional": "^17.2.0",
+    "@types/jest": "^29.2.3",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.43.0",
     "commitizen": "^4.2.5",
@@ -29,7 +30,9 @@
     "eslint-plugin-import": "^2.25.2",
     "husky": "^8.0.2",
     "jest": "^29.3.1",
-    "ts-jest": "^29.0.3"
+    "jest-mock-extended": "^3.0.1",
+    "ts-jest": "^29.0.3",
+    "tsconfig-paths": "^4.1.0"
   },
   "dependencies": {
     "reflect-metadata": "^0.1.13"
