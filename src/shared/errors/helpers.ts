@@ -11,7 +11,7 @@ export const forbidden = (error: ErrorInfo): IResponse => ({
 	body: new AppError(error)
 })
 
-export const serverError = (error: Partial<ErrorInfo>): IResponse => ({
+export const serverError = (error?: Partial<ErrorInfo>): IResponse => ({
 	statusCode: 500,
-	body: new AppError({ ...INTERNAL_SERVER_ERROR, stack: error.stack },)
+	body: new AppError({ ...INTERNAL_SERVER_ERROR, stack: error?.stack },)
 })
