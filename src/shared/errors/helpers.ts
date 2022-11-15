@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 import { IResponse } from '@modules/user/application/protocols'
-import { AppError, ErrorInfo, INTERNAL_SERVER_ERROR, USERNAME_ALREADY_EXISTS } from '.'
+import { AppError, ErrorInfo, INTERNAL_SERVER_ERROR } from '.'
 
 export const success = (data: any): IResponse => ({
 	statusCode: 200,
