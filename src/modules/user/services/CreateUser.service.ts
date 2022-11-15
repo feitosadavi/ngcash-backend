@@ -10,10 +10,10 @@ export class CreateUserService implements ICreateUserService {
 
 	async execute (input: ICreateUserService.Input): Promise<ICreateUserService.Output> {
 		const hashedPassword = await this.hasher.hash(input.password)
-		await this.createUserRepository.create({
+		const res = await this.createUserRepository.create({
 			...input,
 			password: hashedPassword
 		})
-		return false
+		return res
 	}
 }
