@@ -1,8 +1,8 @@
 /* eslint-disable indent */
 import { ICreateUserService } from '@modules/user/domain/contracts'
 import { ICreateUserModel } from '@modules/user/domain/models'
-import { AppError, USERNAME_ALREADY_EXISTS } from '@shared/errors'
-import { forbidden, serverError, success } from '@shared/errors/helpers'
+import { USERNAME_ALREADY_EXISTS } from '@shared/errors'
+import { forbidden, processErrors, success } from '@shared/errors/helpers'
 import { IController, IRequest, IResponse } from '../protocols'
 
 export class CreateUserController implements IController {
@@ -16,18 +16,10 @@ export class CreateUserController implements IController {
 			return success(true)
 
 		} catch (error: any) {
-			if (error instanceof AppError) {
-				switch (error.name) {
-					case USERNAME_ALREADY_EXISTS.name:
-						return forbidden(error)
-
-					default:
-						serverError({ stack: error.stack })
-						break
-				}
-			}
-
-			return serverError({ stack: error.stack })
+			return processErrors(error, [{
+				possibleErrorName: USERNAME_ALREADY_EXISTS.name,
+				return: forbidden(error)
+			}])
 		}
 	}
 }
