@@ -4,7 +4,7 @@ import { CreateUserService } from '@modules/user/services'
 
 import { IHasherAdapter } from '@shared/data/adapters/cryptography'
 import { ICreateUserRepository, ILoadOneUserByRepository } from '@modules/user/services/repository.protocols'
-import { AppError, USERNAME_ALREADY_EXISTS } from '@shared/errors'
+import { UsernameAlreadyExistsError } from '@shared/errors'
 
 const makeFakeCreateUserModel = (): ICreateUserModel => ({
 	username: 'any_username',
@@ -61,7 +61,7 @@ describe('CreateUserService', () => {
 		const promise = sut.execute(fakeCreateUserModel)
 
 		await expect(promise)
-			.rejects.toThrowError(new AppError(USERNAME_ALREADY_EXISTS))
+			.rejects.toThrowError(new UsernameAlreadyExistsError())
 	})
 
 	it('should call hasher with correct input', async () => {

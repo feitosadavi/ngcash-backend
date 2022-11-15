@@ -4,9 +4,9 @@ import { ICreateUserModel } from '@modules/user/domain/models'
 import { IHasherAdapter } from '@shared/data/adapters/cryptography'
 import { ICreateUserService } from '@modules/user/domain/contracts'
 import { CreateUserController } from '@modules/user/application/controllers/CreateUser.controller'
-import { AppError, USERNAME_ALREADY_EXISTS } from '@shared/errors'
+import { InternalServerError, UsernameAlreadyExistsError, ValidationError } from '@shared/errors'
 import { throwError } from '@tests/helpers'
-import { forbidden, serverError } from '@shared/errors/helpers'
+import { badRequest, forbidden, serverError } from '@shared/errors/helpers'
 import { IValidator } from '@shared/data/adapters'
 
 const makeFakeCreateUserModel = (): ICreateUserModel => ({
@@ -55,34 +55,43 @@ describe('CreateUserController', () => {
 	it('should call Validator with correct input', async () => {
 		await sut.handle(fakeRequest)
 
-		expect(fakeValidator.validate)
-			.toHaveBeenCalledWith(fakeRequest.body)
+		expect(fakeValidator.validate).toHaveBeenCalledWith(fakeRequest.body)
+	})
+
+	it('should call return 400 if Validator throws', async () => {
+		const error = new ValidationError('any_error')
+
+		fakeValidator.validate.mockImplementationOnce(() => { throw error })
+
+		const res = await sut.handle(fakeRequest)
+		console.log(badRequest(error))
+
+		expect(res).toEqual(badRequest(error))
 	})
 
 	it('should call CreateUserService with correct input', async () => {
 		await sut.handle(fakeRequest)
 
-		expect(fakeCreateUserService.execute)
-			.toHaveBeenCalledWith(fakeCreateUserModel)
+		expect(fakeCreateUserService.execute).toHaveBeenCalledWith(fakeCreateUserModel)
 	})
 
-	it('should call return 403 if CreateUserService throws USERNAME_ALREADY_EXISTS error', async () => {
+	it('should return 403 if CreateUserService throws USERNAME_ALREADY_EXISTS error', async () => {
 		fakeCreateUserService.execute
-			.mockImplementationOnce(() => throwError(new AppError(USERNAME_ALREADY_EXISTS)))
+			.mockImplementationOnce(() => throwError(new UsernameAlreadyExistsError()))
 
 		const res = await sut.handle(fakeRequest)
 
 		expect(res)
-			.toEqual(forbidden(new AppError(USERNAME_ALREADY_EXISTS)))
+			.toEqual(forbidden(new UsernameAlreadyExistsError()))
 	})
 
 	it('should call return 500 if CreateUserService throws other errors', async () => {
-		fakeCreateUserService.execute
-			.mockImplementationOnce(() => throwError())
+		const error = new InternalServerError()
+
+		fakeCreateUserService.execute.mockImplementationOnce(() => throwError(error))
 
 		const res = await sut.handle(fakeRequest)
 
-		expect(res)
-			.toEqual(serverError())
+		expect(res).toEqual(serverError(error))
 	})
 })
