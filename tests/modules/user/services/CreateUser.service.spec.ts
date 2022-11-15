@@ -4,7 +4,7 @@ import { CreateUserService } from '../../../../src/modules/user/services'
 // import { CreateUserService } from '@/'
 
 import { IHasherAdapter } from 'shared/data/adapters/cryptography'
-import { ICreateUserRepository } from 'modules/user/services/repository.protocols'
+import { ICreateUserRepository, ILoadOneUserByRepository } from 'modules/user/services/repository.protocols'
 
 const makeFakeCreateUserModel = (): ICreateUserModel => ({
 	username: 'any_username',
@@ -15,6 +15,7 @@ describe('CreateUserService', () => {
 	let sut: CreateUserService
 	let fakeHasher: MockProxy<IHasherAdapter>
 	let fakeCreateUserRepository: MockProxy<ICreateUserRepository>
+	let fakeLoadOneUserRepository: MockProxy<ILoadOneUserByRepository>
 
 	let fakeCreateUserModel: ICreateUserModel
 
@@ -25,16 +26,31 @@ describe('CreateUserService', () => {
 		fakeCreateUserRepository = mock()
 		fakeCreateUserRepository.create.mockResolvedValue(true)
 
+		fakeLoadOneUserRepository = mock()
+		fakeLoadOneUserRepository.loadOneBy.mockResolvedValue(makeFakeCreateUserModel())
+
 		fakeCreateUserModel = makeFakeCreateUserModel()
 	})
 
 	beforeEach(() => {
-		sut = new CreateUserService(fakeHasher, fakeCreateUserRepository)
+		sut = new CreateUserService(
+			fakeHasher,
+			fakeLoadOneUserRepository,
+			fakeCreateUserRepository)
+	})
+
+	it('should call fakeLoadOneUserRepository with correct input', async () => {
+		await sut.execute(fakeCreateUserModel)
+
+		const { username } = fakeCreateUserModel
+
+		expect(fakeLoadOneUserRepository.loadOneBy)
+			.toHaveBeenCalledWith({ username })
 	})
 
 	it('should call hasher with correct input', async () => {
 		await sut.execute(fakeCreateUserModel)
-		expect(fakeHasher.hash).toHaveBeenCalledWith('any_password')
+		expect(fakeHasher.hash).toHaveBeenCalledWith(fakeCreateUserModel.password)
 	})
 
 	it('should call createUserRepository with correct input', async () => {
