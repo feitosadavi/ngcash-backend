@@ -42,4 +42,9 @@ describe('CreateUserService', () => {
 		expect(fakeCreateUserRepository.create)
 			.toHaveBeenCalledWith({ ...fakeCreateUserModel, password: 'hashed_password' })
 	})
+
+	it('should return true on success', async () => {
+		const result = await sut.execute(fakeCreateUserModel)
+		expect(result).toBe(true)
+	})
 })
