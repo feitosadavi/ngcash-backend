@@ -1,12 +1,17 @@
 import { mock, MockProxy } from 'jest-mock-extended'
-import { ICreateUserModel } from '../../../../src/modules/user/domain/models'
-import { CreateUserService } from '../../../../src/modules/user/services'
-// import { CreateUserService } from '@/'
+import { ICreateUserModel, IUserModel } from '@modules/user/domain/models'
+import { CreateUserService } from '@modules/user/services'
 
-import { IHasherAdapter } from 'shared/data/adapters/cryptography'
-import { ICreateUserRepository, ILoadOneUserByRepository } from 'modules/user/services/repository.protocols'
+import { IHasherAdapter } from '@shared/data/adapters/cryptography'
+import { ICreateUserRepository, ILoadOneUserByRepository } from '@modules/user/services/repository.protocols'
+import { AppError, USERNAME_ALREADY_EXISTS } from '@shared/errors'
 
 const makeFakeCreateUserModel = (): ICreateUserModel => ({
+	username: 'any_username',
+	password: 'any_password'
+})
+
+const makeFakeUserModel = (): IUserModel => ({
 	username: 'any_username',
 	password: 'any_password'
 })
@@ -18,6 +23,7 @@ describe('CreateUserService', () => {
 	let fakeLoadOneUserRepository: MockProxy<ILoadOneUserByRepository>
 
 	let fakeCreateUserModel: ICreateUserModel
+	let fakeUserModel: IUserModel
 
 	beforeAll(() => {
 		fakeHasher = mock()
@@ -27,9 +33,10 @@ describe('CreateUserService', () => {
 		fakeCreateUserRepository.create.mockResolvedValue(true)
 
 		fakeLoadOneUserRepository = mock()
-		fakeLoadOneUserRepository.loadOneBy.mockResolvedValue(makeFakeCreateUserModel())
+		fakeLoadOneUserRepository.loadOneBy.mockResolvedValue(null)
 
 		fakeCreateUserModel = makeFakeCreateUserModel()
+		fakeUserModel = makeFakeUserModel()
 	})
 
 	beforeEach(() => {
@@ -46,6 +53,15 @@ describe('CreateUserService', () => {
 
 		expect(fakeLoadOneUserRepository.loadOneBy)
 			.toHaveBeenCalledWith({ username })
+	})
+
+	it('should thorw if fakeLoadOneUserRepository returns a user', async () => {
+		fakeLoadOneUserRepository.loadOneBy.mockReturnValueOnce(Promise.resolve(fakeUserModel))
+
+		const promise = sut.execute(fakeCreateUserModel)
+
+		await expect(promise)
+			.rejects.toThrowError(new AppError(USERNAME_ALREADY_EXISTS))
 	})
 
 	it('should call hasher with correct input', async () => {
