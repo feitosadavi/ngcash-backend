@@ -16,6 +16,7 @@ module.exports = {
 		'@typescript-eslint'
 	],
 	'rules': {
+		'@typescript-eslint/no-namespace': 'off',
 		'indent': [
 			'error',
 			'tab'
