@@ -1,4 +1,4 @@
-import { ICreateUserModel, IUserModel } from 'modules/user/domain/models'
+import { ICreateUserModel, IUserModel } from '@modules/user/domain/models'
 
 export interface ICreateUserRepository {
 	create (input: ICreateUserRepository.Input): Promise<ICreateUserRepository.Output>

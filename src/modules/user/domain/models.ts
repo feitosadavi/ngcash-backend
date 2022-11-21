@@ -4,6 +4,7 @@ export interface ICreateUserModel {
 }
 
 export interface IUserModel {
+	id: string
 	username: string
 	password: string
 }

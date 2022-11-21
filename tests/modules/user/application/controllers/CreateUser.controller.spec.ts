@@ -8,16 +8,7 @@ import { InternalServerError, UsernameAlreadyExistsError, ValidationError } from
 import { throwError } from '@tests/helpers'
 import { badRequest, forbidden, serverError } from '@shared/errors/helpers'
 import { IValidator } from '@shared/data/adapters'
-
-const makeFakeCreateUserModel = (): ICreateUserModel => ({
-	username: 'any_username',
-	password: 'any_password'
-})
-
-// const makeFakeUserModel = (): IUserModel => ({
-// 	username: 'any_username',
-// 	password: 'any_password'
-// })
+import { makeFakeCreateUserModel } from '../../mocks/fakes'
 
 const makeFakeRequest = (): CreateUserController.Req => ({
 	body: makeFakeCreateUserModel()

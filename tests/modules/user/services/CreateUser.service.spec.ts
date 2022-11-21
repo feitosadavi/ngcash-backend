@@ -12,6 +12,7 @@ const makeFakeCreateUserModel = (): ICreateUserModel => ({
 })
 
 const makeFakeUserModel = (): IUserModel => ({
+	id: 'any_id',
 	username: 'any_username',
 	password: 'any_password'
 })
