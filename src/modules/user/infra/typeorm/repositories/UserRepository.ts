@@ -9,9 +9,9 @@ export class UserRepository implements ICreateUserRepository, ILoadOneUserByRepo
 
 	async create (input: ICreateUserRepository.Input): Promise<ICreateUserRepository.Output> {
 
-		const res = await this.ormRepository.save(input)
+		const res = await this.ormRepository.insert(input)
 
-		return !!res.id
+		return !!res.identifiers[0].id
 	}
 
 	async loadOneBy (input: ILoadOneUserByRepository.Input): Promise<ILoadOneUserByRepository.Output> {
