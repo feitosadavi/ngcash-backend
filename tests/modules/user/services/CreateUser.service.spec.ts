@@ -5,17 +5,7 @@ import { CreateUserService } from '@modules/user/services'
 import { IHasherAdapter } from '@shared/data/adapters/cryptography'
 import { ICreateUserRepository, ILoadOneUserByRepository } from '@modules/user/services/repository.protocols'
 import { UsernameAlreadyExistsError } from '@shared/errors'
-
-const makeFakeCreateUserModel = (): ICreateUserModel => ({
-	username: 'any_username',
-	password: 'any_password'
-})
-
-const makeFakeUserModel = (): IUserModel => ({
-	id: 'any_id',
-	username: 'any_username',
-	password: 'any_password'
-})
+import { makeFakeCreateUserModel, makeFakeUserModel } from '../mocks/fakes'
 
 describe('CreateUserService', () => {
 	let sut: CreateUserService

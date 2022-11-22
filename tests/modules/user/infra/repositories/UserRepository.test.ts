@@ -35,22 +35,14 @@ describe('UserRepository', () => {
 	})
 
 	describe('create', () => {
-		// it('should not create a new user if username already exists', async () => {
-		// 	await userOrmRepository.save(fakeCreateUserModel)
+		it('should not create a new user if username already exists', async () => {
+			await userOrmRepository.save(fakeCreateUserModel)
 
-		// 	const promise = sut.create(fakeCreateUserModel)
-
-		// 	await expect(promise).rejects.toThrow()
-		// })
-		it('should throw if orm throws a comum error', async () => {
-			const queryRunner = dataSource.createQueryRunner()
-
-			jest.spyOn(queryRunner.manager, 'insert').mockImplementationOnce(() => { throw new Error() })
-			const promise = await sut.create(fakeCreateUserModel)
-			console.log(promise)
+			const promise = sut.create(fakeCreateUserModel)
 
 			await expect(promise).rejects.toThrow()
 		})
+
 		it('should create a new user and account on success', async () => {
 			const res = await sut.create(fakeCreateUserModel)
 			const account = (await accountOrmRepository.find())[0]
