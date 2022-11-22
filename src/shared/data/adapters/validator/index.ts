@@ -1,5 +1,5 @@
 export interface IValidator {
-	validate (input: IValidator.Input): Promise<IValidator.Output>
+	validate (input: IValidator.Input): IValidator.Output
 }
 
 export namespace IValidator {

@@ -32,7 +32,7 @@ describe('CreateUserController', () => {
 		fakeCreateUserService.execute.mockResolvedValue(true)
 
 		fakeValidator = mock()
-		fakeValidator.validate.mockResolvedValue(null)
+		fakeValidator.validate.mockReturnValue(null)
 
 		fakeCreateUserModel = makeFakeCreateUserModel()
 		// fakeUserModel = makeFakeUserModel()
