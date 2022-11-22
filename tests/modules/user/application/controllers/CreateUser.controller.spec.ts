@@ -19,7 +19,6 @@ describe('CreateUserController', () => {
 	let fakeValidator: MockProxy<IValidator>
 
 	let fakeCreateUserModel: ICreateUserModel
-	// let fakeUserModel: IUserModel
 	let fakeRequest: CreateUserController.Req
 
 	beforeAll(() => {
@@ -33,7 +32,6 @@ describe('CreateUserController', () => {
 		fakeValidator.validate.mockReturnValue(null)
 
 		fakeCreateUserModel = makeFakeCreateUserModel()
-		// fakeUserModel = makeFakeUserModel()
 		fakeRequest = makeFakeRequest()
 	})
 
