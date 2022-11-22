@@ -1,3 +1,4 @@
+import Account from '@modules/account/infra/typeorm/entities/Account.entity'
 import { ICreateUserModel } from '@modules/user/domain/models'
 import User from '@modules/user/infra/typeorm/entities/User.entity'
 import { UserRepository } from '@modules/user/infra/typeorm/repositories/UserRepository'
@@ -7,53 +8,73 @@ import { makeFakeCreateUserModel } from '../../mocks/fakes'
 
 describe('UserRepository', () => {
 	let sut: UserRepository
-	let ormRepository: Repository<User>
+
+	let userOrmRepository: Repository<User>
+	let accountOrmRepository: Repository<Account>
 
 	let fakeCreateUserModel: ICreateUserModel
 
 	beforeAll(async () => {
-		ormRepository = (await dataSource.initialize()).manager.getRepository(User)
-		sut = new UserRepository(ormRepository)
+		const ds = await dataSource.initialize()
+		userOrmRepository = ds.manager.getRepository(User)
+		accountOrmRepository = ds.manager.getRepository(Account)
+
+		sut = new UserRepository(ds)
 
 		fakeCreateUserModel = makeFakeCreateUserModel()
 	})
 
+
 	afterEach(async () => {
-		ormRepository.clear()
+		const user = (await userOrmRepository.find())[0]
+		if (user) await userOrmRepository.delete({ id: user.id })
+
+		const account = (await accountOrmRepository.find())[0]
+		if (account) await accountOrmRepository.delete({ id: account.id })
+
 	})
 
 	describe('create', () => {
-		it('should not create a new user if username already exists', async () => {
-			await ormRepository.save(fakeCreateUserModel)
+		// it('should not create a new user if username already exists', async () => {
+		// 	await userOrmRepository.save(fakeCreateUserModel)
 
-			const res = await sut.create(fakeCreateUserModel)
+		// 	const promise = sut.create(fakeCreateUserModel)
 
-			expect(res).toBe(false)
-		})
+		// 	await expect(promise).rejects.toThrow()
+		// })
 		it('should throw if orm throws a comum error', async () => {
-			await ormRepository.save(fakeCreateUserModel)
-			jest.spyOn(ormRepository, 'insert').mockImplementationOnce(() => { throw new Error() })
-			const promise = sut.create(fakeCreateUserModel)
+			const queryRunner = dataSource.createQueryRunner()
+
+			jest.spyOn(queryRunner.manager, 'insert').mockImplementationOnce(() => { throw new Error() })
+			const promise = await sut.create(fakeCreateUserModel)
+			console.log(promise)
 
 			await expect(promise).rejects.toThrow()
 		})
-		it('should create a new user on success', async () => {
+		it('should create a new user and account on success', async () => {
 			const res = await sut.create(fakeCreateUserModel)
+			const account = (await accountOrmRepository.find())[0]
+
+			expect(account.balance).toBe(100)
 			expect(res).toBe(true)
 		})
 	})
 
 	describe('loadOneBy', () => {
 		it('should search for one user given the input', async () => {
-			const { username, password } = fakeCreateUserModel
+			const account = new Account()
+			await accountOrmRepository.insert(account)
 
-			await ormRepository.save(fakeCreateUserModel)
+			const { username, password } = fakeCreateUserModel
+			await userOrmRepository.insert({ username, password, account })
 
 			const user = await sut.loadOneBy({ username })
 
 			expect(user?.id).toBeTruthy()
 			expect(user?.username).toBe(username)
 			expect(user?.password).toBe(password)
+			expect(user?.account?.id).toBeTruthy()
+			expect(user?.account?.balance).toBe(100)
 		})
 	})
 

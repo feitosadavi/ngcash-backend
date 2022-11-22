@@ -1,7 +1,8 @@
 /* eslint-disable indent */
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
 
 import { IUserModel } from '@modules/user/domain/models'
+import Account from '@modules/account/infra/typeorm/entities/Account.entity'
 
 @Entity('user')
 class User implements IUserModel {
@@ -13,6 +14,10 @@ class User implements IUserModel {
 
 	@Column()
 	password!: string
+
+	@OneToOne(() => Account, { cascade: true })
+	@JoinColumn()
+	account!: Account
 }
 
 export default User

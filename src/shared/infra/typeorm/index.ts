@@ -1,5 +1,6 @@
 import { DataSource } from 'typeorm'
 import User from '@modules/user/infra/typeorm/entities/User.entity'
+import Account from '@modules/account/infra/typeorm/entities/Account.entity'
 
 
 export const dataSource = new DataSource({
@@ -9,6 +10,6 @@ export const dataSource = new DataSource({
 	username: 'postgres',
 	password: 'postgres',
 	database: 'postgres',
-	entities: [User],
+	entities: [User, Account],
 	synchronize: true,
 })

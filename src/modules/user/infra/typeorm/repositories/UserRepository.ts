@@ -1,25 +1,49 @@
 
+import Account from '@modules/account/infra/typeorm/entities/Account.entity'
 import { ICreateUserRepository, ILoadOneUserByRepository } from '@modules/user/services/repository.protocols'
-import { QueryFailedError, Repository } from 'typeorm'
+import { dataSource } from '@shared/infra/typeorm'
+import { DataSource } from 'typeorm'
 import User from '../entities/User.entity'
 
 export class UserRepository implements ICreateUserRepository, ILoadOneUserByRepository {
 
-	constructor(private readonly ormRepository: Repository<User>) { }
+	constructor(private readonly orm: DataSource) { }
 
-	async create (input: ICreateUserRepository.Input): Promise<ICreateUserRepository.Output> {
+	async create ({ username, password }: ICreateUserRepository.Input): Promise<ICreateUserRepository.Output> {
+		const queryRunner = dataSource.createQueryRunner()
+		await queryRunner.connect()
+		await queryRunner.startTransaction()
+
 		try {
-			const res = await this.ormRepository.insert(input)
+			const account = new Account()
+			await queryRunner.manager.insert(Account, account)
 
-			return !!res.identifiers[0].id
+			await queryRunner.manager.insert(User, { username, password, account })
+
+			await queryRunner.commitTransaction()
+
+			return true
+
 		} catch (error) {
-			if (error instanceof QueryFailedError) return false
-			else throw error
+			console.log(error)
+
+			await queryRunner.rollbackTransaction()
+			throw error
+
+		} finally {
+			await queryRunner.release()
 		}
 	}
 
 	async loadOneBy (input: ILoadOneUserByRepository.Input): Promise<ILoadOneUserByRepository.Output> {
-		const user = this.ormRepository.findOneBy(input)
-		return user
+		try {
+
+			const user = await this.orm.getRepository<User>('user').findOne({ where: { ...input }, relations: { account: true } })
+			return user
+		} catch (error) {
+			console.log(error)
+			return null
+
+		}
 	}
 }
