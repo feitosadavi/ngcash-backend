@@ -15,7 +15,7 @@ export class CreateUserValidator implements IValidator {
 		})
 
 		const { error } = schema.validate(input)
-		if (error) return error
+		if (error) return error.message
 		return null
 	}
 }

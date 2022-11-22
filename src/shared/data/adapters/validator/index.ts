@@ -4,5 +4,5 @@ export interface IValidator {
 
 export namespace IValidator {
 	export type Input = any
-	export type Output = Error | null
+	export type Output = string | null
 }

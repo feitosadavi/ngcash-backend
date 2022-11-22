@@ -4,19 +4,20 @@ import { ICreateUserModel } from '@modules/user/domain/models'
 import { IValidator } from '@shared/data/adapters'
 import { UsernameAlreadyExistsError, ValidationError } from '@shared/errors'
 import { badRequest, forbidden, processErrors, success } from '@shared/errors/helpers'
-import { IController, IRequest, IResponse } from '../protocols'
+import { IController, IResponse } from '../protocols'
 
 export class CreateUserController implements IController {
 	constructor(private readonly validator: IValidator, private readonly createUserService: ICreateUserService) { }
 
 	async handle (req: CreateUserController.Req): Promise<CreateUserController.Res> {
 		try {
-			await this.validator.validate(req.body)
+			const errorMsg = this.validator.validate(req)
 
-			if (req.body) {
-				await this.createUserService.execute(req?.body)
-			}
-			return success(true)
+			if (errorMsg) throw new ValidationError(errorMsg)
+
+			const res = await this.createUserService.execute(req)
+
+			return success(res)
 
 		} catch (error: any) {
 			return processErrors(error, [{
@@ -31,6 +32,6 @@ export class CreateUserController implements IController {
 }
 
 export namespace CreateUserController {
-	export type Req = IRequest<ICreateUserModel>
+	export type Req = ICreateUserModel
 	export type Res = IResponse
 }
