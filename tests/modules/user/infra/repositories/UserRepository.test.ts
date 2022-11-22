@@ -23,6 +23,20 @@ describe('UserRepository', () => {
 	})
 
 	describe('create', () => {
+		it('should not create a new user if username already exists', async () => {
+			await ormRepository.save(fakeCreateUserModel)
+
+			const res = await sut.create(fakeCreateUserModel)
+
+			expect(res).toBe(false)
+		})
+		it('should throw if orm throws a comum error', async () => {
+			await ormRepository.save(fakeCreateUserModel)
+			jest.spyOn(ormRepository, 'insert').mockImplementationOnce(() => { throw new Error() })
+			const promise = sut.create(fakeCreateUserModel)
+
+			await expect(promise).rejects.toThrow()
+		})
 		it('should create a new user on success', async () => {
 			const res = await sut.create(fakeCreateUserModel)
 			expect(res).toBe(true)
