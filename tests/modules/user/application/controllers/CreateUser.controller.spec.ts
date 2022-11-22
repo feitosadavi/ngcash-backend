@@ -10,9 +10,7 @@ import { badRequest, forbidden, serverError } from '@shared/errors/helpers'
 import { IValidator } from '@shared/data/adapters'
 import { makeFakeCreateUserModel } from '../../mocks/fakes'
 
-const makeFakeRequest = (): CreateUserController.Req => ({
-	body: makeFakeCreateUserModel()
-})
+const makeFakeRequest = (): CreateUserController.Req => makeFakeCreateUserModel()
 
 describe('CreateUserController', () => {
 	let sut: CreateUserController
@@ -46,17 +44,17 @@ describe('CreateUserController', () => {
 	it('should call Validator with correct input', async () => {
 		await sut.handle(fakeRequest)
 
-		expect(fakeValidator.validate).toHaveBeenCalledWith(fakeRequest.body)
+		expect(fakeValidator.validate).toHaveBeenCalledWith(fakeRequest)
 	})
 
-	it('should call return 400 if Validator throws', async () => {
-		const error = new ValidationError('any_error')
+	it('should return 400 returns an error message', async () => {
+		const errorMsg = 'any_error_msg'
 
-		fakeValidator.validate.mockImplementationOnce(() => { throw error })
+		fakeValidator.validate.mockReturnValueOnce(errorMsg)
 
 		const res = await sut.handle(fakeRequest)
 
-		expect(res).toEqual(badRequest(error))
+		expect(res).toEqual(badRequest(new ValidationError(errorMsg)))
 	})
 
 	it('should call CreateUserService with correct input', async () => {
