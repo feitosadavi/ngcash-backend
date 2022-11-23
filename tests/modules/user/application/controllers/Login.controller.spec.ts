@@ -1,5 +1,5 @@
 import { LoginController } from '@modules/user/application/controllers/Login.controller'
-import { IAuthenticationService } from '@modules/user/domain/contracts'
+import { IAuthenticatorService } from '@modules/user/domain/contracts'
 import { IValidator } from '@shared/data/adapters'
 import { ValidationError, WrongPasswordError, WrongUsernameError } from '@shared/errors'
 import { badRequest, serverError, success } from '@shared/errors/helpers'
@@ -16,7 +16,7 @@ describe('LoginController', () => {
 	let sut: LoginController
 
 	let fakeValidator: MockProxy<IValidator>
-	let fakeAuthenticator: MockProxy<IAuthenticationService>
+	let fakeAuthenticator: MockProxy<IAuthenticatorService>
 
 	let fakeRequest: LoginController.Req
 
