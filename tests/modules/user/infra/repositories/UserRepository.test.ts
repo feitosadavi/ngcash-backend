@@ -52,6 +52,26 @@ describe('UserRepository', () => {
 		})
 	})
 
+	describe('update', () => {
+		it('should update a user', async () => {
+			const res = await userOrmRepository.save(fakeCreateUserModel)
+
+			await sut.update({ id: res.id, data: { accessToken: 'any_token' } })
+
+			const user = await userOrmRepository.findOneBy({ id: res.id })
+
+			expect(user?.accessToken).toBe('any_token')
+		})
+
+		// it('should create a new user and account on success', async () => {
+		// 	const res = await sut.create(fakeCreateUserModel)
+		// 	const account = (await accountOrmRepository.find())[0]
+
+		// 	expect(account.balance).toBe(100)
+		// 	expect(res).toBe(true)
+		// })
+	})
+
 	describe('loadOneBy', () => {
 		it('should search for one user given the input', async () => {
 			const account = new Account()
