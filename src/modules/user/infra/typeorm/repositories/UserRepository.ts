@@ -1,11 +1,11 @@
 
 import Account from '@modules/account/infra/typeorm/entities/Account.entity'
-import { ICreateUserRepository, ILoadOneUserByRepository } from '@modules/user/services/repository.protocols'
+import { ICreateUserRepository, ILoadOneUserByRepository, IUpdateUserRepository } from '@modules/user/services/repository.protocols'
 import { dataSource } from '@shared/infra/typeorm'
 import { DataSource } from 'typeorm'
 import User from '../entities/User.entity'
 
-export class UserRepository implements ICreateUserRepository, ILoadOneUserByRepository {
+export class UserRepository implements ICreateUserRepository, ILoadOneUserByRepository, IUpdateUserRepository {
 
 	constructor(private readonly orm: DataSource) { }
 
@@ -35,9 +35,13 @@ export class UserRepository implements ICreateUserRepository, ILoadOneUserByRepo
 		}
 	}
 
+	async update ({ id, data }: IUpdateUserRepository.Input): Promise<void> {
+		const userRepository = this.orm.getRepository<User>(User)
+		await userRepository.update({ id }, data)
+	}
+
 	async loadOneBy (input: ILoadOneUserByRepository.Input): Promise<ILoadOneUserByRepository.Output> {
 		try {
-
 			const user = await this.orm.getRepository<User>('user').findOne({ where: { ...input }, relations: { account: true } })
 			return user
 		} catch (error) {

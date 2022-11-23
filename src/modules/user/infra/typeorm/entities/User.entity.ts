@@ -18,6 +18,9 @@ class User implements IUserModel {
 	@OneToOne(() => Account, { cascade: true })
 	@JoinColumn()
 	account!: Account
+
+	@Column({ default: '' })
+	accessToken?: string
 }
 
 export default User
