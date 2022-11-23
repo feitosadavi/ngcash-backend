@@ -13,6 +13,20 @@ export class UsernameAlreadyExistsError extends Error {
 	}
 }
 
+export class WrongUsernameError extends Error {
+	constructor() {
+		super('No user with this username was found!')
+		this.name = 'WrongUsernameError'
+	}
+}
+
+export class WrongPasswordError extends Error {
+	constructor() {
+		super('This password doesnt matches with username!')
+		this.name = 'WrongPasswordError'
+	}
+}
+
 export class ValidationError extends Error {
 	constructor(message: string) {
 		super(message)
