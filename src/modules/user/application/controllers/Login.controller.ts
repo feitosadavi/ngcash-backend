@@ -1,4 +1,4 @@
-import { IAuthenticationService } from '@modules/user/domain/contracts'
+import { IAuthenticatorService } from '@modules/user/domain/contracts'
 import { IValidator } from '@shared/data/adapters'
 import { ValidationError, WrongPasswordError, WrongUsernameError } from '@shared/errors'
 import { badRequest, processErrors, success } from '@shared/errors/helpers'
@@ -7,7 +7,7 @@ import { IController } from '../protocols'
 export class LoginController implements IController {
 	constructor(
 		private readonly validator: IValidator,
-		private readonly authenticator: IAuthenticationService
+		private readonly authenticator: IAuthenticatorService
 	) { }
 
 	async handle (req: LoginController.Req): Promise<any> {

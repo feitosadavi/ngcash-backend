@@ -19,3 +19,15 @@ export namespace ILoadOneUserByRepository {
 	}
 	export type Output = IUserModel | null
 }
+
+export interface IUpdateUserRepository {
+	update (input: IUpdateUserRepository.Input): Promise<IUpdateUserRepository.Output>
+}
+
+export namespace IUpdateUserRepository {
+	export type Input = {
+		id: string,
+		data: Partial<IUserModel>
+	}
+	export type Output = void
+}

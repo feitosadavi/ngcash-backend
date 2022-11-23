@@ -9,11 +9,11 @@ export namespace ICreateUserService {
 	export type Output = boolean
 }
 
-export interface IAuthenticationService {
-	execute (input: IAuthenticationService.Input): Promise<IAuthenticationService.Output>
+export interface IAuthenticatorService {
+	execute (input: IAuthenticatorService.Input): Promise<IAuthenticatorService.Output>
 }
 
-export namespace IAuthenticationService {
+export namespace IAuthenticatorService {
 	export type Input = {
 		username: string
 		password: string

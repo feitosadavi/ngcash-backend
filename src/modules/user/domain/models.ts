@@ -10,4 +10,5 @@ export interface IUserModel {
 	username: string
 	password: string
 	account: IAccountModel
+	accessToken?: string
 }
