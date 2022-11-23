@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { IHashComparerAdapter } from '@shared/data/adapters'
 import { BcryptAdapter } from '@shared/infra/adapters'
